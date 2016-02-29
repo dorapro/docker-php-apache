@@ -1,0 +1,31 @@
+dp_app:
+  image: busybox
+  volumes:
+    - ~/docker/home:/var/www/html
+  tty: true
+  container_name: dp_app
+
+dp_web:
+  # image: dorapro/php-apache
+  build: .
+  ports:
+    - "3080:80"
+    - "30443:443"
+  volumes_from:
+    - dp_app
+  links:
+    - dp_db
+  environment:
+    PHP_IDE_CONFIG: serverName=192.168.99.100
+  container_name: dp_web
+
+dp_db:
+  image: mysql
+  ports:
+    - "3306"
+  volumes_from:
+    - dp_app
+  environment:
+    MYSQL_DATABASE: myapp
+    MYSQL_ROOT_PASSWORD: secret
+  container_name: dp_db
