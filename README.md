@@ -1,3 +1,10 @@
+##### 使い方
+
+```
+docker run --rm -v "`pwd`:/var/www/html" -p "8000:80" dorapro/php-apache
+open http://`docker-machine ip default`:8000/
+```
+
 ##### ドキュメントルートの変更
 
 ```
@@ -12,3 +19,7 @@ RUN sed -i 's#/var/www/html#/var/www/public#' /etc/apache2/sites-enabled/ssl-def
 WORKDIR /var/www
 
 ```
+
+##### リンク
+
++ https://hub.docker.com/r/dorapro/php-apache/
