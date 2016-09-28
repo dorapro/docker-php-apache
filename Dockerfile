@@ -1,4 +1,4 @@
-FROM dorapro/official-image:php_5.6-apache
+FROM dorapro/official-image:php_5.4-apache
 
 RUN apt-get update \
   && apt-get install -y \
