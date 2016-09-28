@@ -30,6 +30,9 @@ RUN apt-get update \
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
 
+# Document Rootの設定
+RUN sed -i 's#/var/www/html#/var/www/public#' /etc/apache2/apache2.conf
+
 # 設定ファイルの設置
 ADD conf.d/vhost.conf /etc/apache2/sites-enabled/000-default.conf
 ADD conf.d/ssl-default.conf /etc/apache2/sites-enabled/ssl-default.conf
