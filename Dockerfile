@@ -56,3 +56,5 @@ EXPOSE 443
 
 # user id changed
 RUN usermod -u 1000 www-data
+
+WORKDIR /var/www/public
