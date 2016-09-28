@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+  dp_app:
+    image: busybox
+    volumes:
+      - ~/docker/home:/var/www/public
+    tty: true
+    restart: always
+    container_name: dp_app
+
+  dp_web:
+    depends_on:
+      - dp_app
+    # image: dorapro/php-apache
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes_from:
+      - dp_app
+    links:
+      - dp_db:db
+    environment:
+      PHP_IDE_CONFIG: serverName=localhost
+      MYSQL_HOST: db
+      MYSQL_DATABASE: myapp
+      MYSQL_ROOT_PASSWORD: secret
+    restart: always
+    container_name: dp_web
+
+  dp_db:
+    image: mysql
+    ports:
+      - "3306"
+    volumes_from:
+      - dp_app
+    environment:
+      MYSQL_DATABASE: myapp
+      MYSQL_ROOT_PASSWORD: secret
+    restart: always
+    container_name: dp_db
