@@ -39,6 +39,9 @@ ADD conf.d/ssl-default.conf /etc/apache2/sites-enabled/ssl-default.conf
 ADD conf.d/php.ini /usr/local/etc/php/php.ini
 ADD conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
+# Xdebug CLIの設置
+ENV XDEBUG_CONFIG remote_host=10.254.254.254
+
 # composer command setup
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
