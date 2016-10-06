@@ -30,15 +30,6 @@ RUN apt-get update \
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
 
-# Document Rootの設定
-RUN sed -i 's#/var/www/html#/var/www/public#' /etc/apache2/apache2.conf
-
-# 設定ファイルの設置
-ADD conf.d/vhost.conf /etc/apache2/sites-enabled/000-default.conf
-ADD conf.d/ssl-default.conf /etc/apache2/sites-enabled/ssl-default.conf
-ADD conf.d/php.ini /usr/local/etc/php/php.ini
-ADD conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
-
 # Xdebug CLIの設置
 ENV XDEBUG_CONFIG remote_host=10.254.254.254
 
@@ -47,6 +38,19 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 ENV HOME /root
 ENV PATH $HOME/.composer/vendor/bin:$PATH
+
+# entrykit
+ADD https://github.com/progrium/entrykit/releases/download/v0.4.0/entrykit_0.4.0_Linux_x86_64.tgz /tmp/entrykit.tgz
+RUN tar -xzf /tmp/entrykit.tgz -C /bin entrykit \
+    && entrykit --symlink \
+    && true
+
+# 設定ファイルの設置
+ENV DOCUMENT_ROOT /var/www/html/public
+COPY conf.d/vhost.conf.tmpl /etc/apache2/sites-enabled/000-default.conf.tmpl
+COPY conf.d/ssl-default.conf.tmpl /etc/apache2/sites-enabled/ssl-default.conf.tmpl
+COPY conf.d/php.ini /usr/local/etc/php/php.ini
+COPY conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # mod_rewrite enabled
 RUN a2enmod rewrite
@@ -60,4 +64,9 @@ EXPOSE 443
 # user id changed
 RUN usermod -u 1000 www-data
 
-WORKDIR /var/www/public
+ENTRYPOINT ["render", \
+    "/etc/apache2/sites-enabled/000-default.conf", \
+    "/etc/apache2/sites-enabled/ssl-default.conf", \
+    "--", \
+    "apache2-foreground" \
+]

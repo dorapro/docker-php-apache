@@ -1,6 +1,6 @@
 <IfModule mod_ssl.c>
     <VirtualHost _default_:443>
-        DocumentRoot /var/www/public
+        DocumentRoot {{ var "DOCUMENT_ROOT" | default "/var/www/html" }}
 
         SSLEngine on
         SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
